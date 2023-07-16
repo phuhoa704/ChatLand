@@ -1,0 +1,14 @@
+.user-profile-container {
+    padding-top: 60px;
+    overflow-x: hidden;
+    width: 90%;
+    margin: auto;
+
+    .user-profile-wrapper {
+        padding: 20px 0;
+
+        .content {
+            padding: 0 20px;
+        }
+    }
+}

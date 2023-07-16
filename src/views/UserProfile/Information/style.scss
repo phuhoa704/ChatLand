@@ -1,0 +1,22 @@
+.user-information {
+    padding-top: 60px;
+    overflow-x: hidden;
+    width: 80%;
+    margin: auto;
+
+    .user-information-container {
+        padding: 20px 0;
+
+        .user-information-form {
+            .col-4 {
+                .image-container {
+                    span {
+                        img {
+                            border-radius: 50%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

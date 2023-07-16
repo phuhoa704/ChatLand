@@ -1,0 +1,81 @@
+#payment-container {
+    height: 100vh;
+    padding-top: 60px;
+
+    .payment-wrapper {
+        margin: auto;
+        width: 80%;
+        height: 100%;
+        padding-top: 80px;
+
+        .payment-actions {
+            text-align: left;
+        }
+
+        .payment-content {
+            margin-top: 50px;
+
+            .package-container {
+                padding: 20px;
+
+                .grid {
+                    box-shadow: rgba(204, 162, 68, 0.5) 0px 5px 15px;
+                    border-radius: 10px;
+                    cursor: pointer;
+
+                    .col-8 {
+                        .package-content-container {
+                            text-align: left;
+                        }
+                    }
+                }
+
+                .grid:hover {
+                    box-shadow: rgba(140, 180, 215, 0.3);
+                }
+            }
+
+            .payment-packages-item {
+                box-shadow: rgba(204, 162, 68, 0.5) 0px 5px 15px;
+                padding: 10px 0;
+                border-radius: 10px;
+                cursor: pointer;
+
+                .payment-packages-item-price {
+                    background-color: rgba(140, 180, 215, 0.3);
+                    width: 70%;
+                    margin: auto;
+                    padding: 1px 0px;
+                    border-radius: 10px;
+                }
+            }
+
+            .payment-packages-item:hover {
+                box-shadow: rgba(140, 180, 215, 0.3);
+            }
+
+            .payment-method-container {
+                .payment-method-item {
+                    height: 110px;
+                    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+                    border-radius: 10px;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 10px;
+                    }
+                }
+
+                .payment-method-item-active {
+                    border: 1px solid #7971d5;
+                }
+            }
+
+            .payment-code {
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+}
