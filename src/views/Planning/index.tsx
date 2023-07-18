@@ -19,7 +19,8 @@ import { getProvinces } from "../../redux/apis/Address";
 import { getTypeMap } from "../../redux/apis/TypeMap";
 import LayerPicker from "../../components/LayerPicker";
 
-const accessToken = 'pk.eyJ1IjoicGhpbGhucTIwMDEiLCJhIjoiY2t6b3gyMnY1NjMwczJ3bXpzNHV1aTFqZCJ9.3Iyto1HJPC3fieRx-aTWlg';
+// const accessToken = 'pk.eyJ1IjoicGhpbGhucTIwMDEiLCJhIjoiY2t6b3gyMnY1NjMwczJ3bXpzNHV1aTFqZCJ9.3Iyto1HJPC3fieRx-aTWlg';
+const accessToken = 'pk.eyJ1IjoidGhvbmd0aW5sYW5kIiwiYSI6ImNsZHh5aDk2ZDBsaGQzcG52M240dTJtaDUifQ.bsuTcIH_fvF0T000bsG2tg';
 mapboxgl.accessToken = accessToken;
 
 interface MultipleSlidersLabel {
@@ -79,8 +80,7 @@ const Planning = () => {
         mapRef.current = new mapboxgl.Map({
             container: "map", // container ID
             center: [centerCoor.lngCenter, centerCoor.latCenter],
-            maxZoom: 25,
-            minZoom: 1,
+            maxZoom: 24,
             zoom: 12, // starting zoom.
             attributionControl: false,
         });
@@ -101,7 +101,7 @@ const Planning = () => {
                     type: "raster",
                     source: "raster-tiles",
                     minzoom: 0,
-                    maxzoom: 22,
+                    maxzoom: 24,
                 },
             ],
         };
@@ -195,6 +195,10 @@ const Planning = () => {
                     let idx = distanceMarkers.findIndex((item: any) => item.id === e.features[0].id);
                     distanceMarkers.splice(idx, 1);
                 }
+                console.log(Draw.getAll());
+                if(Draw.getAll().features.length === 0) {
+                    mapRef.current.on('click', eventFindMaps);
+                }
             })
             mapRef.current.on('draw.update', function (e: any) {
                 if (e.features[0].geometry.type === 'LineString') {
@@ -262,6 +266,9 @@ const Planning = () => {
                 }
             })
             mapRef.current.on('click', eventFindMaps);
+            mapRef.current.on('draw.modechange', (e: any) => {
+                mapRef.current.off('click', eventFindMaps);
+            })
         })
     }, []);
     useEffect(() => {
@@ -276,6 +283,17 @@ const Planning = () => {
     }, [centerCoor]);
 
     const handleOnClick = async (Id: number) => {
+        /* mapRef.current.addSource(`source-test`, {
+            type: 'raster',
+            url: 'mapbox://thongtinland.2h1rcauq',
+            tileSize: 256,
+        });
+        mapRef.current.addLayer({
+            'id': `layer-test`,
+            'type': 'raster',
+            'source': `source-test`,
+            'paint': {},
+        }); */
         let rs: any = await dispatch(viewPostById(Id));
         if (rs.payload.action) {
             const data = rs.payload.data;
@@ -308,12 +326,18 @@ const Planning = () => {
                         `${GEOSERVER_SERVICE}${dataLayer.FileUpload.name_source}`
                     ],
                     tileSize: 256,
+                    maxzoom: 24,
+                    minzoom: 1,
                 });
                 mapRef.current.addLayer({
                     'id': `layer-${data.Id}`,
                     'type': 'raster',
                     'source': `source-${data.Id}`,
-                    'paint': {},
+                    'maxzoom': 24,
+                    'minzoom': 1,
+                    'paint': {
+                        'raster-resampling': 'nearest'
+                    },
                 });
                 mapRef.current.flyTo({
                     center: [data.Lng, data.Lat],
@@ -325,7 +349,7 @@ const Planning = () => {
                 setSourceIds([...sourceIds, `source-${data.Id}`]);
                 setLayerIds([...layerIds, `layer-${data.Id}`]);
                 mapRef.current.off('click', eventFindMaps);
-                mapRef.current.on('click', (e: any) => {
+                /* mapRef.current.on('click', (e: any) => {
                     if (markerRef.current) {
                         markerRef.current.remove();
                     }
@@ -341,7 +365,7 @@ const Planning = () => {
                     }))
                     setShowSidebarInfor(true);
                     markerRef.current = new mapboxgl.Marker().setLngLat(e.lngLat).addTo(mapRef.current);
-                })
+                }) */
             }
         }
     }
