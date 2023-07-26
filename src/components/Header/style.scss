@@ -78,9 +78,44 @@
                 }
             }
 
+            .responsive_btn_search {
+                display: none;
+            }
+
             .header_btn {
                 font-size: 13px;
             }
+        }
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .header_container {
+        .header_left {
+            width: 132px !important;
+
+            button.header_left_btn {
+                font-size: 15px !important;
+            }
+        }
+
+        .header_right {
+            #btn_sidebar_collapse {
+                width: 26px !important;
+                height: 26px !important;
+                left: 116px !important;
+            }
+
+            .header_controls {
+                .search_container {
+                    display: none;
+                }
+
+                .responsive_btn_search {
+                    display: block;
+                }
+            }
+
         }
     }
 }

@@ -84,6 +84,7 @@ const Header = () => {
                                 <InputText type="text" className="p-inputtext-sm" placeholder="Tìm kiếm" tooltip="Nhập tìm kiếm" tooltipOptions={{ position: 'bottom' }} />
                                 <i className="pi pi-search" />
                             </span>
+                            <Button icon={'pi pi-search'} className="header_btn responsive_btn_search" onClick={() => setDisplayModalSearch(true)}/>
                         </li>
                     </ul>
                 </div>
