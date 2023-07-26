@@ -14,27 +14,20 @@ const UserProfile = () => {
         },
         {
             id: 2,
-            icon: 'pi-users',
-            title: 'Loại người dùng',
-            url: '/type-user',
-            description: 'Cập nhật loại người dùng'
-        },
-        {
-            id: 3,
             icon: 'pi-shield',
             title: 'Bảo mật',
             url: '/security',
             description: 'Cập nhật mật khẩu và bảo mật tài khoản'
         },
         {
-            id: 4,
+            id: 3,
             icon: 'pi-ticket',
             title: 'Nạp tiền',
             url: '/payment',
             description: 'Nạp tiền vào tài khoản và mua các gói dịch vụ'
         },
         {
-            id: 5,
+            id: 4,
             icon: 'pi-bell',
             title: 'Thông báo',
             url: '/notification',

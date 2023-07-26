@@ -8,13 +8,14 @@ import { Avatar } from 'primereact/avatar';
 import { MenuItem } from 'primereact/menuitem';
 import { classNames } from "primereact/utils";
 import LoginModal from "../Login";
-import ModalSearch from "../ModalSearch";
 import { Tag } from 'primereact/tag';
 import { Logout } from "../../redux/apis/Auth";
 import { useNavigate } from "react-router-dom";
 import './style.scss';
 import { router } from "../../configs/router";
 import SignupDialog from "../Signup";
+import ModalSearch from "../ModalSearch";
+
 
 const Header = () => {
     const navigate = useNavigate();
@@ -23,8 +24,8 @@ const Header = () => {
     const sidebar = useAppSelector(state => state.common.sidebar);
     const user = useAppSelector(state => state.auth.user);
     const [displayModalLogin, setDisplayModalLogin] = useState<boolean>(false);
-    const [displayModalSearch, setDisplayModalSearch] = useState<boolean>(false);
     const [displayModalSignup, setDisplayModalSignup] = useState<boolean>(false);
+    const [displayModalSearch, setDisplayModalSearch] = useState<boolean>(false);
     let items: MenuItem[] = [
         {
             command: () => { console.log('aaa') },
@@ -53,14 +54,14 @@ const Header = () => {
     return (
         <>
             <ModalSearch visible={displayModalSearch} closeModal={() => setDisplayModalSearch(false)} finishSearch={handleFinishSearch} />
-            <SignupDialog visible={displayModalSignup} onHide={() => setDisplayModalSignup(false)}/>
+            <SignupDialog visible={displayModalSignup} onHide={() => setDisplayModalSignup(false)} />
             <LoginModal visible={displayModalLogin} onHide={() => setDisplayModalLogin(false)} openSignup={() => {
                 setDisplayModalLogin(false);
                 setDisplayModalSignup(true);
             }} />
             <section className="header_container">
                 <div className="header_left">
-                    <Button className="header_btn header_left_btn" onClick={() => navigate(router.HOME)} style={{ fontSize: 25 }} label="COPCAT" />
+                    <Button className="header_btn header_left_btn" onClick={() => navigate(router.HOME)} style={{ fontSize: 25 }} label="CHATLAND" />
                 </div>
                 <div className="header_right">
                     <Button className="header_btn header_right_btn" tooltip="Đóng/mở danh sách quy hoạch" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 15 }} onClick={() => dispatch(saveSidebar(!sidebar))} id="btn_sidebar_collapse" icon={sidebar ? 'pi pi-angle-left' : 'pi pi-angle-right'} />

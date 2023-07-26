@@ -10,7 +10,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import * as turf from '@turf/turf';
 import './style.scss';
 import { GEOSERVER_SERVICE } from "../../configs/apiUrl";
-import { saveSidebar } from "../../redux/slices/Common";
+import { saveCoordinates, saveSidebar } from "../../redux/slices/Common";
 import { Sidebar } from 'primereact/sidebar';
 import { Message } from 'primereact/message';
 import { findAllKeywords } from "../../redux/apis/Keywords";
@@ -18,6 +18,9 @@ import { Button } from 'primereact/button';
 import { getProvinces } from "../../redux/apis/Address";
 import { getTypeMap } from "../../redux/apis/TypeMap";
 import LayerPicker from "../../components/LayerPicker";
+import axios from "axios";
+import ModalSearch from "../../components/ModalSearch";
+import HeaderPlaning from "../../components/Header";
 
 // const accessToken = 'pk.eyJ1IjoicGhpbGhucTIwMDEiLCJhIjoiY2t6b3gyMnY1NjMwczJ3bXpzNHV1aTFqZCJ9.3Iyto1HJPC3fieRx-aTWlg';
 const accessToken = 'pk.eyJ1IjoidGhvbmd0aW5sYW5kIiwiYSI6ImNsZHh5aDk2ZDBsaGQzcG52M240dTJtaDUifQ.bsuTcIH_fvF0T000bsG2tg';
@@ -49,6 +52,7 @@ const Planning = () => {
     const [multipleMode, setMultipleMode] = useState<boolean>(false);
     const [multipleSlidersLabel, setMultipleSlidersLabel] = useState<MultipleSlidersLabel[]>([]);
     const [current, setCurrent] = useState<'road' | 'satellite'>('satellite');
+    const [currentLocation, setCurrentLocation] = useState<string>('');
     const getPosition = async () => {
         return new Promise((resolve, reject) => {
             if (!("geolocation" in navigator)) {
@@ -62,6 +66,22 @@ const Planning = () => {
             };
         })
     };
+    const getCurrentLocation = async (lat: any, lng: any) => {
+        let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${accessToken}`;
+        let config = {
+            method: 'GET',
+            url: url
+        }
+        await axios(config).then((res: any) => {
+            let location = '';
+            res?.data.features[0].context.forEach((item: any) => {
+                location += ', ' + item?.text;
+            })
+            setCurrentLocation(location.slice(1, location.length))
+        }).catch((err: any) => {
+            console.log(err)
+        })
+    }
     useEffect(() => {
         dispatch(findAllKeywords([]));
         dispatch(getProvinces([]));
@@ -196,7 +216,7 @@ const Planning = () => {
                     distanceMarkers.splice(idx, 1);
                 }
                 console.log(Draw.getAll());
-                if(Draw.getAll().features.length === 0) {
+                if (Draw.getAll().features.length === 0) {
                     mapRef.current.on('click', eventFindMaps);
                 }
             })
@@ -272,6 +292,8 @@ const Planning = () => {
         })
     }, []);
     useEffect(() => {
+        getCurrentLocation(centerCoor.latCenter, centerCoor.lngCenter);
+        dispatch(saveCoordinates(`${centerCoor.latCenter}, ${centerCoor.lngCenter}`))
         dispatch(searchListPlanning({
             coordinates: `${centerCoor.latCenter}, ${centerCoor.lngCenter}`,
             district_id: null,
@@ -283,17 +305,6 @@ const Planning = () => {
     }, [centerCoor]);
 
     const handleOnClick = async (Id: number) => {
-        /* mapRef.current.addSource(`source-test`, {
-            type: 'raster',
-            url: 'mapbox://thongtinland.2h1rcauq',
-            tileSize: 256,
-        });
-        mapRef.current.addLayer({
-            'id': `layer-test`,
-            'type': 'raster',
-            'source': `source-test`,
-            'paint': {},
-        }); */
         let rs: any = await dispatch(viewPostById(Id));
         if (rs.payload.action) {
             const data = rs.payload.data;
@@ -349,23 +360,6 @@ const Planning = () => {
                 setSourceIds([...sourceIds, `source-${data.Id}`]);
                 setLayerIds([...layerIds, `layer-${data.Id}`]);
                 mapRef.current.off('click', eventFindMaps);
-                /* mapRef.current.on('click', (e: any) => {
-                    if (markerRef.current) {
-                        markerRef.current.remove();
-                    }
-                    dispatch(readData({
-                        name_source: dataLayer.FileUpload.NameSource,
-                        lat: e.lngLat.lat,
-                        lng: e.lngLat.lng,
-                        x: e.point.x,
-                        y: e.point.y,
-                        width: mapRef.current.getCanvas().width,
-                        height: mapRef.current.getCanvas().height,
-                        count: 0
-                    }))
-                    setShowSidebarInfor(true);
-                    markerRef.current = new mapboxgl.Marker().setLngLat(e.lngLat).addTo(mapRef.current);
-                }) */
             }
         }
     }
@@ -382,7 +376,8 @@ const Planning = () => {
             Title: null,
             typeMapId: null,
             wards: null
-        }))
+        }));
+        getCurrentLocation(e.lngLat.lat, e.lngLat.lng);
         markerRef.current = new mapboxgl.Marker().setLngLat(e.lngLat).addTo(mapRef.current);
     }
 
@@ -394,7 +389,7 @@ const Planning = () => {
             mapRef.current.addLayer({
                 'id': item,
                 'type': 'raster',
-                'source': sourceIds.find((it,idx) => idx === index),
+                'source': sourceIds.find((it, idx) => idx === index),
                 'paint': {},
             });
         })
@@ -429,49 +424,51 @@ const Planning = () => {
         }
     }
     return (
-        <div style={{ width: '100%', height: '100vh', position: 'relative', zIndex: 1 }}>
-            <SideDrawer handleOnClick={handleOnClick} />
-            <Sidebar className="side_list" visible={showSidebarInfor} position="right" onHide={() => setShowSidebarInfor(false)}>
-                {(Object.keys(data).length > 0) ? (
-                    <>
-                        <div className="flex align-items-center justify-content-between mb-2">
-                            <span className="text-900 font-medium text-lg">{data.data_file.name}</span>
+        <>
+            <div style={{ width: '100%', height: '100vh', position: 'relative', zIndex: 1 }}>
+                <SideDrawer handleOnClick={handleOnClick} currentLocation={currentLocation} />
+                <Sidebar className="side_list" visible={showSidebarInfor} position="right" onHide={() => setShowSidebarInfor(false)}>
+                    {(Object.keys(data).length > 0) ? (
+                        <>
+                            <div className="flex align-items-center justify-content-between mb-2">
+                                <span className="text-900 font-medium text-lg">{data.data_file.name}</span>
+                            </div>
+                            {Object.keys(data.data).map(item => {
+                                let finder = keywords.find(it => it.Key === item)
+                                return (
+                                    <div className="grid">
+                                        <div className="col-6">
+                                            <span className="text-600 font-medium text-sm">{finder ? finder.Value : item}</span>
+                                        </div>
+                                        <div className="col-6">
+                                            <span className="text-600 font-medium text-sm">{data.data[item]}</span>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </>
+                    ) : <Message text='Không tìm thấy thông tin' />}
+                </Sidebar>
+                <Button style={{ zIndex: 100, position: 'absolute', bottom: 10, right: 50, fontSize: 12, padding: '8px 10px' }} icon='pi pi-map' label={multipleMode ? 'Chế độ lồng ghép' : 'Chế độ đơn'} onClick={() => setMultipleMode(!multipleMode)} />
+                <LayerPicker current={current} setCurrent={handleChangeMapStyle} style={{ position: 'absolute', bottom: 50, right: 50, height: 65, width: 65, padding: 2, zIndex: 1 }} />
+                <div className={`map-overlay surface-card shadow-2 border-round ${showSlider ? 'opacity-100' : 'opacity-0'}`}>
+                    {multipleSlidersLabel.map(item => (
+                        <div className="map-overlay-inner" key={item.layer}>
+                            <label>{item.label}</label>
+                            <input id="slider"
+                                onChange={(e) => mapRef.current.setPaintProperty(
+                                    item.layer,
+                                    'raster-opacity',
+                                    parseInt(e.target.value, 10) / 100
+                                )} type="range" min="0" max="100" step="0" defaultValue={100}
+                            />
                         </div>
-                        {Object.keys(data.data).map(item => {
-                            let finder = keywords.find(it => it.Key === item)
-                            return (
-                                <div className="grid">
-                                    <div className="col-6">
-                                        <span className="text-600 font-medium text-sm">{finder ? finder.Value : item}</span>
-                                    </div>
-                                    <div className="col-6">
-                                        <span className="text-600 font-medium text-sm">{data.data[item]}</span>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </>
-                ) : <Message text='Không tìm thấy thông tin' />}
-            </Sidebar>
-            <Button style={{ zIndex: 100, position: 'absolute', bottom: 10, right: 50, fontSize: 12, padding: '8px 10px' }} icon='pi pi-map' label={multipleMode ? 'Chế độ lồng ghép' : 'Chế độ đơn'} onClick={() => setMultipleMode(!multipleMode)} />
-            <LayerPicker current={current} setCurrent={handleChangeMapStyle} style={{ position: 'absolute', bottom: 50, right: 50, height: 65, width: 65, padding: 2, zIndex: 1 }} />
-            <div className={`map-overlay surface-card shadow-2 border-round ${showSlider ? 'opacity-100' : 'opacity-0'}`}>
-                {multipleSlidersLabel.map(item => (
-                    <div className="map-overlay-inner" key={item.layer}>
-                        <label>{item.label}</label>
-                        <input id="slider"
-                            onChange={(e) => mapRef.current.setPaintProperty(
-                                item.layer,
-                                'raster-opacity',
-                                parseInt(e.target.value, 10) / 100
-                            )} type="range" min="0" max="100" step="0" defaultValue={100}
-                        />
-                    </div>
-                ))}
+                    ))}
+                </div>
+                <div id='map' style={{ height: '100%' }} ref={mapContainer}>
+                </div>
             </div>
-            <div id='map' style={{ height: '100%' }} ref={mapContainer}>
-            </div>
-        </div>
+        </>
     );
 }
 

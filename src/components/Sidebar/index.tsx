@@ -8,10 +8,11 @@ import { Image } from 'primereact/image';
 import './style.scss';
 
 interface SideDrawerProps {
-    handleOnClick: (Id: number) => void;
+    handleOnClick: (Id: number) => void
+    currentLocation: string
 }
 
-const SideDrawer: React.FC<SideDrawerProps> = ({ handleOnClick }) => {
+const SideDrawer: React.FC<SideDrawerProps> = ({ handleOnClick, currentLocation }) => {
     const dispatch = useAppDispatch();
     const listPlanning = useAppSelector(state => state.planning.list);
     const sidebar = useAppSelector(state => state.common.sidebar);
@@ -53,8 +54,8 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ handleOnClick }) => {
     )
     return (
         <Sidebar className='side_list shadow-5 w-full md:w-20rem lg:w-30rem' visible={sidebar} dismissable modal={false} showCloseIcon={false} onHide={() => dispatch(saveSidebar(false))}>
-            <h3>Danh sách quy hoạch</h3>
-            <DataView value={listPlanning} itemTemplate={itemTemplate} header={null} />
+            <span><i className='pi pi-map-marker'></i> Vị trí hiện tại của bạn: {currentLocation}</span>
+            <DataView value={listPlanning} itemTemplate={itemTemplate} header={<h3>Danh sách quy hoạch</h3>} />
         </Sidebar>
     );
 }

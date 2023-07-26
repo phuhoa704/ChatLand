@@ -30,6 +30,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
     const wards = useAppSelector(state => state.address.wards);
     const typeMap = useAppSelector(state => state.typemap.list);
     const loading = useAppSelector(state => state.loading.loading);
+    const coordinates = useAppSelector(state => state.common.coordinates);
     const [inputValid, setInputValid] = useState<boolean>(false);
     const [inputVal, setInputVal] = useState<string>('');
     const [formData, setFormData] = useState<FormValues>({
@@ -41,12 +42,12 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
     });
     const onSubmit = async (data: FormValues, form: any) => {
         let rs: any = await dispatch(searchListPlanning({
-            coordinates: null,
-            district_id: formData.district_id.id,
-            province_id: formData.province_id.id,
-            Title: data.Title,
-            typeMapId: data.typeMapId.id,
-            wards: formData.wards.id
+            coordinates: coordinates,
+            district_id: formData.district_id.id ? formData.district_id.id : null,
+            province_id: formData.province_id.id ? formData.province_id.id : null,
+            Title: data.Title ? data.Title : null,
+            typeMapId: data.typeMapId ? data.typeMapId.id : null,
+            wards: formData.wards.id ? formData.wards.id : null
         }));
         if(rs.payload.action) {
             finishSearch();
