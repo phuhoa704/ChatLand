@@ -18,6 +18,7 @@ import Header from './components/Header';
 import UserProfile from './views/UserProfile';
 import UserInformation from './views/UserProfile/Information';
 import ProtectedRoute from './components/ProtectedRoute';
+import Posts from './views/Posts';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -39,6 +40,7 @@ function App() {
       <Header />
       <Routes>
         <Route path={router.HOME} element={<Planning />} />
+        <Route path={router.POST} element={<Posts />}/>
         <Route path={router.USER_PAYMENT} element={<ProtectedRoute><Payment /></ProtectedRoute>}/>
         <Route path={router.USER} element={<ProtectedRoute><UserProfile /></ProtectedRoute>}/>
         <Route path={router.USER_INFORMATION} element={<ProtectedRoute><UserInformation /></ProtectedRoute>}/>

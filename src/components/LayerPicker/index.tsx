@@ -1,6 +1,7 @@
 import { Button } from 'primereact/button';
 import road from '../../assets/layers/road.png';
 import satellite from '../../assets/layers/satellite.png';
+import './style.scss';
 
 interface LayerPickerProps {
     current: 'road' | 'satellite',
@@ -10,7 +11,7 @@ interface LayerPickerProps {
 
 const LayerPicker: React.FC<LayerPickerProps> = ({ current, setCurrent, style }) => {
     return (
-        <Button onClick={setCurrent} style={style}>
+        <Button onClick={setCurrent} className='btn-layer-picker' style={style}>
             {(current === 'road') ?
                 <>
                     <img alt='' src={satellite} style={{ width: '100%', borderRadius: 6 }} />

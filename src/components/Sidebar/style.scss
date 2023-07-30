@@ -1,4 +1,53 @@
 .side_list {
     margin-top: 60px;
     height: calc(100vh - 60px) !important;
+    position: fixed;
+}
+
+.data-view {
+    .p-dataview-header {
+        span {
+            font-size: 1.1rem;
+        }
+    }
+
+    .save-post-container {
+        .btn-save-post {
+            width: 16px;
+            height: 16px;
+            background: url("https://cssanimation.rocks/images/posts/steps/heart.png") no-repeat;
+            background-position: 0 0;
+            cursor: pointer;
+            transition: background-position 1s steps(28);
+            transition-duration: 0s;
+
+            &.is-active {
+                transition-duration: 1s;
+                background-position: -2800px 0;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .data-view {
+        .p-dataview-header {
+            span {
+                font-size: 1rem;
+            }
+        }
+
+        .p-dataview-content {
+            .data-view-item {
+                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                padding: 5px !important;
+                border-radius: 10px;
+                margin: 10px 0 10px 0;
+
+                .data-view-item-description {
+                    align-items: flex-start !important;
+                }
+            }
+        }
+    }
 }

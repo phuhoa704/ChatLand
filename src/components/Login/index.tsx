@@ -7,6 +7,7 @@ import { Form, Field } from 'react-final-form';
 import { Login } from "../../redux/apis/Auth";
 import { useNavigate } from "react-router-dom";
 import { router } from "../../configs/router";
+import './style.scss';
 
 interface LoginProps {
     visible: boolean,
@@ -34,7 +35,7 @@ const LoginModal: React.FC<LoginProps> = ({ visible, onHide, openSignup }) => {
         }
     }
     return (
-        <Dialog visible={visible} draggable={false} onHide={onHide} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }}>
+        <Dialog id="modal-login" visible={visible} draggable={false} onHide={onHide} breakpoints={{ '960px': '75vw' }} style={{ width: '50vw' }}>
             <div className="text-center mb-5">
                 <div className="text-900 text-2xl font-medium">COPCAT</div>
                 <span className="text-600 font-medium line-height-3">Chưa có tài khoản?</span>

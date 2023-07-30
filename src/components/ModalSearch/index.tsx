@@ -8,6 +8,7 @@ import { searchListPlanning } from "../../redux/apis/Planning";
 import { Form, Field } from 'react-final-form';
 import { Dropdown } from 'primereact/dropdown';
 import { getDistricts, getWards } from "../../redux/apis/Address";
+import './style.scss';
 
 interface ModalSearchProps {
     visible: boolean
@@ -54,7 +55,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
         }
     }
     return (
-        <Dialog header={'Tìm kiếm bản đồ'} draggable={false} visible={visible} style={{ width: '50vw' }} onHide={closeModal}>
+        <Dialog id="modal-search" header={'Tìm kiếm bản đồ'} draggable={false} visible={visible} style={{ width: '50vw' }} onHide={closeModal}>
             <TabView>
                 <TabPanel header="Tìm kiếm">
                     <Form onSubmit={onSubmit} initialValues={{ Title: '', province_id: null, district_id: null, wards: null, typeMapId: null }} render={({ handleSubmit }) => (

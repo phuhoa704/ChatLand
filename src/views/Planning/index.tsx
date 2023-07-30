@@ -10,7 +10,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import * as turf from '@turf/turf';
 import './style.scss';
 import { GEOSERVER_SERVICE } from "../../configs/apiUrl";
-import { saveCoordinates, saveSidebar } from "../../redux/slices/Common";
+import { saveCoordinates, saveModalHistory, saveSidebar } from "../../redux/slices/Common";
 import { Sidebar } from 'primereact/sidebar';
 import { Message } from 'primereact/message';
 import { findAllKeywords } from "../../redux/apis/Keywords";
@@ -21,6 +21,8 @@ import LayerPicker from "../../components/LayerPicker";
 import axios from "axios";
 import ModalSearch from "../../components/ModalSearch";
 import HeaderPlaning from "../../components/Header";
+import ModalPlanningHistory from "../../components/ModalPlaningHistory";
+import ModalInstruction from "../../components/ModalInstruction";
 
 // const accessToken = 'pk.eyJ1IjoicGhpbGhucTIwMDEiLCJhIjoiY2t6b3gyMnY1NjMwczJ3bXpzNHV1aTFqZCJ9.3Iyto1HJPC3fieRx-aTWlg';
 const accessToken = 'pk.eyJ1IjoidGhvbmd0aW5sYW5kIiwiYSI6ImNsZHh5aDk2ZDBsaGQzcG52M240dTJtaDUifQ.bsuTcIH_fvF0T000bsG2tg';
@@ -36,6 +38,7 @@ const Planning = () => {
     const data = useAppSelector(state => state.planning.readData);
     const keywords = useAppSelector(state => state.keyword.list);
     const postById = useAppSelector(state => state.planning.postById);
+    const visibleModalHistory = useAppSelector(state => state.common.modalHistory);
     const [centerCoor, setCenterCoor] = useState<centerCoorProps>({
         latCenter: 10.026228,
         lngCenter: 105.751445
@@ -43,6 +46,7 @@ const Planning = () => {
     const [showSlider, setShowSlider] = useState<boolean>(false);
     const [showSidebarInfor, setShowSidebarInfor] = useState<boolean>(false);
     const [distance, setDistance] = useState('');
+    const [modalInstruction, setModalInstruction] = useState<boolean>(false);
     const [distanceMarkers, setDistanceMarkers] = useState<any[]>([]);
     const mapRef = useRef<any>(null);
     const mapContainer = useRef(null);
@@ -148,6 +152,7 @@ const Planning = () => {
             },
         });
         mapRef.current.addControl(Draw, 'bottom-right');
+        mapRef.current.on('click', eventFindMaps);
         mapRef.current.on('load', () => {
             mapRef.current.on('draw.create', function (e: any) {
                 if (e?.features[0]?.geometry?.type === 'LineString') {
@@ -285,7 +290,6 @@ const Planning = () => {
                     })
                 }
             })
-            mapRef.current.on('click', eventFindMaps);
             mapRef.current.on('draw.modechange', (e: any) => {
                 mapRef.current.off('click', eventFindMaps);
             })
@@ -359,7 +363,9 @@ const Planning = () => {
                 setShowSlider(true);
                 setSourceIds([...sourceIds, `source-${data.Id}`]);
                 setLayerIds([...layerIds, `layer-${data.Id}`]);
-                mapRef.current.off('click', eventFindMaps);
+                mapRef.current.on('click', `layer-${data.Id}`, function(e: any) {
+                    console.log(e);
+                })
             }
         }
     }
@@ -423,10 +429,24 @@ const Planning = () => {
             mapRef.current.setStyle('mapbox://styles/mapbox/streets-v12')
         }
     }
+    const handleRemoveLayer = (item: any) => {
+        let sourceId = item.layer.replace('layer', 'source');
+        if (mapRef.current.getLayer(item.layer)) {
+            mapRef.current.removeLayer(item.layer);
+        }
+        if (mapRef.current.getSource(sourceId)) {
+            mapRef.current.removeSource(sourceId);
+        }
+        setMultipleSlidersLabel(multipleSlidersLabel.filter(it => it.layer !== item.layer));
+        setLayerIds(layerIds.filter(it => it !== item.layer));
+        setSourceIds(sourceIds.filter(it => it !== item.layer));
+    }
     return (
         <>
             <div style={{ width: '100%', height: '100vh', position: 'relative', zIndex: 1 }}>
+                <ModalPlanningHistory visible={visibleModalHistory} closeModal={() => dispatch(saveModalHistory(false))}/>
                 <SideDrawer handleOnClick={handleOnClick} currentLocation={currentLocation} />
+                <ModalInstruction visible={modalInstruction} closeModal={() => setModalInstruction(false)}/>
                 <Sidebar className="side_list" visible={showSidebarInfor} position="right" onHide={() => setShowSidebarInfor(false)}>
                     {(Object.keys(data).length > 0) ? (
                         <>
@@ -449,12 +469,16 @@ const Planning = () => {
                         </>
                     ) : <Message text='Không tìm thấy thông tin' />}
                 </Sidebar>
-                <Button style={{ zIndex: 100, position: 'absolute', bottom: 10, right: 50, fontSize: 12, padding: '8px 10px' }} icon='pi pi-map' label={multipleMode ? 'Chế độ lồng ghép' : 'Chế độ đơn'} onClick={() => setMultipleMode(!multipleMode)} />
-                <LayerPicker current={current} setCurrent={handleChangeMapStyle} style={{ position: 'absolute', bottom: 50, right: 50, height: 65, width: 65, padding: 2, zIndex: 1 }} />
+                <Button style={{ zIndex: 100, position: 'fixed', bottom: 10, right: 50, fontSize: 12, padding: '8px 10px' }} icon='pi pi-map' label={multipleMode ? 'Chế độ lồng ghép' : 'Chế độ đơn'} onClick={() => setMultipleMode(!multipleMode)} />
+                <Button style={{ zIndex: 100, position: 'fixed', bottom: 10, right: 165, fontSize: 12, padding: '8px 10px' }} icon='pi pi-map' label={'Hướng dẫn'} onClick={() => setModalInstruction(true)} />
+                <LayerPicker current={current} setCurrent={handleChangeMapStyle} style={{ position: 'fixed', bottom: 50, right: 50, height: 65, width: 65, padding: 2, zIndex: 1 }} />
                 <div className={`map-overlay surface-card shadow-2 border-round ${showSlider ? 'opacity-100' : 'opacity-0'}`}>
                     {multipleSlidersLabel.map(item => (
                         <div className="map-overlay-inner" key={item.layer}>
-                            <label>{item.label}</label>
+                            <div className="map-overlay-inner-label">
+                                <label>{item.label}</label>
+                                <i className="pi pi-times map-overlay-inner-icon" onClick={() => handleRemoveLayer(item)}></i>
+                            </div>
                             <input id="slider"
                                 onChange={(e) => mapRef.current.setPaintProperty(
                                     item.layer,

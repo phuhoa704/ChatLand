@@ -1,5 +1,5 @@
 export const API_URL = 'http://apitestgis.smartgis.vn:7979/v1';
-export const GEOSERVER_SERVICE = 'http://45.119.85.149:8080/geoserver/smartgis_test/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=';
+export const GEOSERVER_SERVICE = 'http://apitestgis.smartgis.vn:8080/geoserver/smartgis_test/wms?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=';
 
 export const url = {
     //AUTH

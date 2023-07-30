@@ -1,0 +1,16 @@
+#modal-instruction {
+    .instruction-content {
+        .flex {
+            img {
+                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+                border-radius: 10px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 425px) {
+    #modal-instruction {
+        width: 90vw;
+    }
+}
