@@ -12,19 +12,37 @@
     }
 
     .save-post-container {
-        .btn-save-post {
-            width: 16px;
-            height: 16px;
-            background: url("https://cssanimation.rocks/images/posts/steps/heart.png") no-repeat;
-            background-position: 0 0;
+        i {
             cursor: pointer;
-            transition: background-position 1s steps(28);
-            transition-duration: 0s;
+            color: #aaa;
+            transition: .2s;
 
-            &.is-active {
-                transition-duration: 1s;
-                background-position: -2800px 0;
+            &:hover {
+                color: #666;
             }
+        }
+
+        span {
+            position: absolute;
+            bottom: 60px;
+            right: 15px;
+            visibility: hidden;
+            transition: .6s;
+            z-index: 2;
+            font-size: 2px;
+            color: transparent;
+            font-weight: 400;
+        }
+
+        i.is-active {
+            color: #e23b3b;
+        }
+
+        span.is-active {
+            bottom: 60px;
+            font-size: 14px;
+            visibility: visible;
+            animation: fade 1s;
         }
     }
 }
@@ -49,5 +67,19 @@
                 }
             }
         }
+    }
+}
+
+@keyframes fade {
+    0% {
+        color: transparent;
+    }
+
+    50% {
+        color: #e23b3b;
+    }
+
+    100% {
+        color: transparent;
     }
 }

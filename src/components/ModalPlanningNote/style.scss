@@ -1,0 +1,15 @@
+#modal-planning-note {
+    .grid {
+        border: 1px solid #d9d9d9;
+
+        .col-8, .col-4 {
+            border: 1px solid #d9d9d9;
+        }
+    }
+}
+
+@media screen and (max-width: 425px) {
+    #modal-planning-note {
+        width: 95vw !important;
+    }
+}

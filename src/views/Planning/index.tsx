@@ -19,10 +19,10 @@ import { getProvinces } from "../../redux/apis/Address";
 import { getTypeMap } from "../../redux/apis/TypeMap";
 import LayerPicker from "../../components/LayerPicker";
 import axios from "axios";
-import ModalSearch from "../../components/ModalSearch";
-import HeaderPlaning from "../../components/Header";
-import ModalPlanningHistory from "../../components/ModalPlaningHistory";
+import ModalPlanningHistory from "../../components/ModalPlanningHistory";
 import ModalInstruction from "../../components/ModalInstruction";
+import ModalPlanningNote from "../../components/ModalPlanningNote";
+import { isMobile } from 'react-device-detect';
 
 // const accessToken = 'pk.eyJ1IjoicGhpbGhucTIwMDEiLCJhIjoiY2t6b3gyMnY1NjMwczJ3bXpzNHV1aTFqZCJ9.3Iyto1HJPC3fieRx-aTWlg';
 const accessToken = 'pk.eyJ1IjoidGhvbmd0aW5sYW5kIiwiYSI6ImNsZHh5aDk2ZDBsaGQzcG52M240dTJtaDUifQ.bsuTcIH_fvF0T000bsG2tg';
@@ -37,7 +37,6 @@ const Planning = () => {
     const dispatch = useAppDispatch();
     const data = useAppSelector(state => state.planning.readData);
     const keywords = useAppSelector(state => state.keyword.list);
-    const postById = useAppSelector(state => state.planning.postById);
     const visibleModalHistory = useAppSelector(state => state.common.modalHistory);
     const [centerCoor, setCenterCoor] = useState<centerCoorProps>({
         latCenter: 10.026228,
@@ -46,6 +45,7 @@ const Planning = () => {
     const [showSlider, setShowSlider] = useState<boolean>(false);
     const [showSidebarInfor, setShowSidebarInfor] = useState<boolean>(false);
     const [distance, setDistance] = useState('');
+    const [modalNote, setModalNote] = useState<boolean>(false);
     const [modalInstruction, setModalInstruction] = useState<boolean>(false);
     const [distanceMarkers, setDistanceMarkers] = useState<any[]>([]);
     const mapRef = useRef<any>(null);
@@ -154,6 +154,9 @@ const Planning = () => {
         mapRef.current.addControl(Draw, 'bottom-right');
         mapRef.current.on('click', eventFindMaps);
         mapRef.current.on('load', () => {
+            if(isMobile) {
+                mapRef.current.on('touchend', eventFindMaps);
+            }
             mapRef.current.on('draw.create', function (e: any) {
                 if (e?.features[0]?.geometry?.type === 'LineString') {
                     let coord: any = [];
@@ -444,7 +447,8 @@ const Planning = () => {
     return (
         <>
             <div style={{ width: '100%', height: '100vh', position: 'relative', zIndex: 1 }}>
-                <ModalPlanningHistory visible={visibleModalHistory} closeModal={() => dispatch(saveModalHistory(false))}/>
+                <ModalPlanningHistory visible={visibleModalHistory} closeModal={() => dispatch(saveModalHistory(false))} handleOnClick={() => dispatch(saveModalHistory(false))}/>
+                <ModalPlanningNote visible={modalNote} closeModal={() => setModalNote(false)}/>
                 <SideDrawer handleOnClick={handleOnClick} currentLocation={currentLocation} />
                 <ModalInstruction visible={modalInstruction} closeModal={() => setModalInstruction(false)}/>
                 <Sidebar className="side_list" visible={showSidebarInfor} position="right" onHide={() => setShowSidebarInfor(false)}>
@@ -469,8 +473,9 @@ const Planning = () => {
                         </>
                     ) : <Message text='Không tìm thấy thông tin' />}
                 </Sidebar>
-                <Button style={{ zIndex: 100, position: 'fixed', bottom: 10, right: 50, fontSize: 12, padding: '8px 10px' }} icon='pi pi-map' label={multipleMode ? 'Chế độ lồng ghép' : 'Chế độ đơn'} onClick={() => setMultipleMode(!multipleMode)} />
-                <Button style={{ zIndex: 100, position: 'fixed', bottom: 10, right: 165, fontSize: 12, padding: '8px 10px' }} icon='pi pi-map' label={'Hướng dẫn'} onClick={() => setModalInstruction(true)} />
+                <Button className="btn-actions" style={{ zIndex: 100, position: 'fixed', bottom: 10, right: 50, fontSize: 12, padding: '8px 10px' }} icon={multipleMode ? 'pi pi-clone' : 'pi pi-map'} label={multipleMode ? 'Chế độ lồng ghép' : 'Chế độ đơn'} onClick={() => setMultipleMode(!multipleMode)} />
+                <Button className="btn-actions btn-instruction" style={{ zIndex: 100, position: 'fixed', bottom: 10, right: 165, fontSize: 12, padding: '8px 10px' }} icon='pi pi-book' label={'Hướng dẫn'} onClick={() => setModalInstruction(true)} />
+                <Button className="btn-actions btn-note" style={{ zIndex: 100, position: 'fixed', bottom: 10, right: 280, fontSize: 12, padding: '8px 10px' }} icon='pi pi-list' label={'Chú thích'} onClick={() => setModalNote(true)} />
                 <LayerPicker current={current} setCurrent={handleChangeMapStyle} style={{ position: 'fixed', bottom: 50, right: 50, height: 65, width: 65, padding: 2, zIndex: 1 }} />
                 <div className={`map-overlay surface-card shadow-2 border-round ${showSlider ? 'opacity-100' : 'opacity-0'}`}>
                     {multipleSlidersLabel.map(item => (

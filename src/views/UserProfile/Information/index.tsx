@@ -4,6 +4,7 @@ import { router } from '../../../configs/router';
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Form, Field } from 'react-final-form';
+import { Dropdown } from 'primereact/dropdown';
 import { Divider } from 'primereact/divider';
 import { useAppSelector } from '../../../redux/hook';
 import { Image } from 'primereact/image';
@@ -27,6 +28,13 @@ interface FormValuesAddress {
 }
 const UserInformation = () => {
     const [activeField, setActiveField] = useState<'username' | 'email' | 'phone' | '' | 'address'>('');
+    const [userTypeVal, setUserTypeVal] = useState<'KH' | 'NDT' | 'CD' | 'MG'>('KH');
+    const userTypes = [
+        { name: 'Khách hàng', code: 'KH' },
+        { name: 'Nhà đầu tư', code: 'NDT' },
+        { name: 'Chủ đất', code: 'CD' },
+        { name: 'Môi giới', code: 'MG' },
+    ]
     const user = useAppSelector(state => state.auth.user);
     const [avatarUrl, setAvatarUrl] = useState<any>();
     const onSubmitUsername = (data: FormValues, form: any) => {
@@ -89,7 +97,7 @@ const UserInformation = () => {
                 <h3 className='text-left'>Thông tin cá nhân</h3>
                 <div className="user-information-form">
                     <div className="grid">
-                        <div className="col-8">
+                        <div className="col-12 md:col-8">
                             <div className="grid">
                                 <div className="col-12">
                                     {(activeField === 'username') ?
@@ -226,11 +234,20 @@ const UserInformation = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-4">
-                            <div className="image-container">
-                                <Image alt='' src={avatarUrl ? avatarUrl : avatarDefault} width='120px' height='120px' />
+                        <div className="col-12 md:col-4">
+                            <div className="grid">
+                                <div className="col-12">
+                                    <span className='font-medium text-left'>Loại người dùng</span><br />
+                                    <Dropdown options={userTypes} value={userTypeVal} optionLabel="name" optionValue='code' defaultValue={'KH'} onChange={(e) => setUserTypeVal(e.target.value)} placeholder="Loại người dùng" className="w-full md:w-14rem text-left"/>
+                                </div>
+                                <div className="col-12">
+                                <span className='font-medium text-left'>Ảnh đại diện</span>
+                                    <div className="image-container">
+                                        <Image alt='' src={avatarUrl ? avatarUrl : avatarDefault} width='120px' height='120px' />
+                                    </div>
+                                    <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} customUpload uploadHandler={customBase64Uploader} chooseLabel="Tải ảnh đại diện" />
+                                </div>
                             </div>
-                            <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} customUpload uploadHandler={customBase64Uploader} chooseLabel="Tải ảnh đại diện" />
                         </div>
                     </div>
                 </div>

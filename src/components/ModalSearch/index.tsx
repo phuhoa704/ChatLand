@@ -71,7 +71,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
                                         </div>
                                     )} />
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12 md:col-6">
                                     <Field name="province_id" render={({ input, meta }) => (
                                         <div className="field">
                                             <span className="p-float-label p-input-icon-right">
@@ -88,7 +88,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
                                         </div>
                                     )} />
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12 md:col-6">
                                     <Field name="district_id" render={({ input, meta }) => (
                                         <div className="field">
                                             <span className="p-float-label">
@@ -104,7 +104,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
                                         </div>
                                     )} />
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12 md:col-6">
                                     <Field name="wards" render={({ input }) => (
                                         <div className="field">
                                             <span className="p-float-label">
@@ -117,7 +117,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
                                         </div>
                                     )} />
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12 md:col-6">
                                     <Field name="typeMapId" render={({ input }) => (
                                         <div className="field">
                                             <span className="p-float-label">
@@ -137,7 +137,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
                 <TabPanel header="Tọa độ">
                     <div className="font-medium">Tìm tọa độ vị trí trên Google Map</div>
                     <div className="grid">
-                        <div className="col-9">
+                        <div className="col-8 md:col-9">
                             <div className="flex flex-column gap-2">
                                 <InputText type="text" value={inputVal} onChange={(e) => setInputVal(e.target.value)} className={!inputValid ? "p-inputtext-sm" : "p-inputtext-sm p-invalid"} placeholder="Nhập tọa độ" tooltip="Nhập tọa độ" tooltipOptions={{ position: 'bottom' }} aria-describedby="coordinates-help" />
                                 <small id="coordinates-help">
@@ -145,7 +145,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
                                 </small>
                             </div>
                         </div>
-                        <div className="col-3">
+                        <div className="col-4 md:col-3">
                             <Button label="Tìm kiếm" size="small" onClick={async() => {
                                 if (!inputVal) {
                                     setInputValid(true);
@@ -162,7 +162,7 @@ const ModalSearch: React.FC<ModalSearchProps> = ({ visible, closeModal, finishSe
                                         finishSearch();
                                     }
                                 }
-                            }} loading={loading} />
+                            }} loading={loading} className="btn-search-by-coordinates"/>
                         </div>
 
                     </div>

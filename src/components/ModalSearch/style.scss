@@ -1,5 +1,10 @@
 @media screen and (max-width: 425px) {
     #modal-search {
         width: 90vw !important;
+
+        .btn-search-by-coordinates {
+            font-size: 12px !important;
+            padding: 12px !important;
+        }
     }
 }

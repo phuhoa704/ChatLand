@@ -41,7 +41,7 @@ const UserProfile = () => {
                     <h3 className='text-left'>Tài khoản, <span>{user.Username}</span></h3>
                     <div className="grid">
                         {menus.map(item => (
-                            <div className="col-4">
+                            <div className="col-12 md:col-4">
                                 <MenuCard id={item.id} description={item.description} icon={item.icon} title={item.title} url={item.url} key={item.id}/>
                             </div>
                         ))}

@@ -33,14 +33,14 @@ const ModalInstruction: React.FC<ModalInstructionProps> = ({ visible, closeModal
                     để xác định vị trí của quy hoạch gần đó.
                 </span>
                 <div className="flex justify-content-center">
-                    <img src={image2} alt="" />
+                    <img src={image2} alt="" className="w-full" />
                 </div>
                 <h3 className="title">
                     2. Xem quy hoạch
                 </h3>
                 <span>Chọn bản đồ cần xem quy hoạch trong danh sách bên trái.</span>
                 <div className="flex justify-content-center">
-                    <img src={image} alt="" />
+                    <img src={image} alt="" className="w-full"/>
                 </div>
                 <h3 className="title">
                     3. Chế độ lồng ghép
@@ -50,7 +50,7 @@ const ModalInstruction: React.FC<ModalInstructionProps> = ({ visible, closeModal
                     chế độ xem đơn và lồng ghép. Sau đó, chọn bản đồ cần lồng ghép trong danh sách bên trái.
                 </span>
                 <div className="flex justify-content-center">
-                    <img src={image3} alt="" />
+                    <img src={image3} alt="" className="w-full"/>
                 </div>
             </div>
         </Dialog>

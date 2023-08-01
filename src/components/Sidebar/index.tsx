@@ -7,6 +7,7 @@ import { Badge } from 'primereact/badge';
 import { Image } from 'primereact/image';
 import './style.scss';
 import { useState } from 'react';
+import { searchListPlanning } from '../../redux/apis/Planning';
 
 interface SideDrawerProps {
     handleOnClick: (Id: number) => void
@@ -17,7 +18,8 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ handleOnClick, currentLocation 
     const dispatch = useAppDispatch();
     const listPlanning = useAppSelector(state => state.planning.list);
     const sidebar = useAppSelector(state => state.common.sidebar);
-    const [heartOnClick, setHeartOnClick] = useState<string>('');
+    const coordinates = useAppSelector(state => state.common.coordinates);
+    const [heartClicked, setHeartClicked] = useState<string>('');
     const getSeverity = (item: any) => {
         switch (item.status_post) {
             case 1:
@@ -44,9 +46,10 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ handleOnClick, currentLocation 
                         <div className="flex align-items-center gap-3">
                             <div className="text-xs font-bold text-600">{item?.price_view} / lượt xem</div>
                             <Tag value={item?.status_name_post} severity={getSeverity(item)}></Tag>
-                            {/* <div className="save-post-container">
-                                <div className={(heartOnClick !== `${item.Id}-is-active`) ? `btn-save-post` : `btn-save-post is-active`} onClick={() => setHeartOnClick(`${item.Id}-is-active`)}></div>
-                            </div> */}
+                            <div className="save-post-container">
+                                <i className={(heartClicked !== `${item.Id}-is-active`) ? `pi pi-heart-fill` : `pi pi-heart-fill is-active`} onClick={() => setHeartClicked(`${item.Id}-is-active`)}></i>
+                                <span className={(heartClicked !== `${item.Id}-is-active`) ? '' : 'is-active'}>Đã thích</span>
+                            </div>
                         </div>
                         <span className="flex align-items-center gap-2">
                             <i className="pi pi-map-marker"></i>
@@ -60,7 +63,16 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ handleOnClick, currentLocation 
     return (
         <Sidebar className='side_list shadow-5 w-full md:w-20rem lg:w-30rem' visible={sidebar} dismissable modal={false} showCloseIcon={false} onHide={() => dispatch(saveSidebar(false))}>
             <span><i className='pi pi-map-marker'></i> Vị trí hiện tại của bạn: {currentLocation}</span>
-            <DataView value={listPlanning} itemTemplate={itemTemplate} header={<span>Danh sách quy hoạch</span>} className='data-view' />
+            <DataView value={listPlanning} itemTemplate={itemTemplate} header={<div className='flex justify-content-between'><span>Danh sách quy hoạch</span><i className='pi pi-replay cursor-pointer' onClick={() => {
+                dispatch(searchListPlanning({
+                    coordinates: coordinates,
+                    district_id: null,
+                    province_id: null,
+                    Title: null,
+                    typeMapId: null,
+                    wards: null
+                }))
+            }}></i></div>} className='data-view' />
         </Sidebar>
     );
 }

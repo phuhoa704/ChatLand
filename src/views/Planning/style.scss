@@ -58,4 +58,22 @@
     .map-overlay {
         width: 60% !important;
     }
+
+    .btn-actions {
+        .p-button-icon {
+            margin-right: 0px !important;
+        }
+
+        .p-button-label {
+            display: none;
+        }
+    }
+
+    .btn-instruction {
+        right: 95px !important;
+    }
+
+    .btn-note {
+        right: 140px !important;
+    }
 }
